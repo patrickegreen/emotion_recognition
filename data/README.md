@@ -6,3 +6,10 @@ frown_{2d}.jpg
 tongue_{2d}.jpg
 suprise_{2d}.jpg
 blank_{2d}.jpg
+
+Images cropped to 950x1320
+
+Collection
+----------
+01-14: Computer Vision Class
+15-19: Patrick's Work
