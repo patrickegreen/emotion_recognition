@@ -13,3 +13,4 @@ Collection
 ----------
 01-14: Computer Vision Class
 15-19: Patrick's Work
+20-22: Ryan's Work

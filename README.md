@@ -12,6 +12,6 @@ Rob LaTour
 Overview
 --------
 Utilizes three different approaches to classification
-(1) eigenFaces - 
-(2) interestPoints -
-(3) templateMatching - 
+(1) eigenFaces
+(2) interestPoints
+(3) templateMatching
