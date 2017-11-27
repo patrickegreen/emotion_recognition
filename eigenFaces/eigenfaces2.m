@@ -5,61 +5,74 @@
 [rasterizedBlankFaces, rasterizedFrownFaces, rasterizedSmileFaces, rasterizedSurpriseFaces, rasterizedTongueFaces] = rasterizeSet(blankFaces, frownFaces, smileFaces, surpriseFaces, tongueFaces);
 
 %% compute all 5 means
-concatTotal = [rasterizedBlankFaces, rasterizedFrownFaces, rasterizedSmileFaces, rasterizedSurpriseFaces, rasterizedTongueFaces];
+
+blankMean = mean(rasterizedBlankFaces, 2);
+frownMean = mean(rasterizedFrownFaces, 2);
+smileMean = mean(rasterizedSmileFaces, 2);
+surpriseMean = mean(rasterizedSurpriseFaces, 2);
+tongueMean = mean(rasterizedTongueFaces, 2);
+
+concatTotal = [blankMean, frownMean, smileMean, surpriseMean, tongueMean];
+
+
 totalMean = mean(concatTotal, 2);
 
+
+
 %% calculate subtracted means (phi)
+
 phiTotal = concatTotal(:,:) - totalMean(:,1);
 
 %% Compute Eigenvectors and Eigenvalues
 [eigvectors, score, eigvalues] = pca(concatTotal');
 
-%% Keep top 5 vectors since there are 5 different types of faces
-numOfEigenFaces = 25;
-evectors = eigvectors(:, 1:numOfEigenFaces);
-
-%% Calculate feature vectors for each image in data
+% 
+% %% Keep top 5 vectors since there are 5 different types of faces
+ numOfEigenFaces = 4;
+ evectors = eigvectors(:, 1:numOfEigenFaces);
+% 
+ %% Calculate feature vectors for each image in data
 features = evectors' * phiTotal;
-
-
-
-%% Load test image and calculate a score for it
-testImage = rgb2gray(double(imread('frown_19.jpg'))/255);
-[r, c] = size(phiTotal);
-featureVector = evectors' * (testImage(:) - totalMean);
-scores = arrayfun(@(n) 1 / (1 + norm(features(:,n) - featureVector)), 1:c);
-
-%% Get top 5 scores
-[val, idcs] = sort(scores, 'descend');
-val(1:5)
-idcs(1:5)
-scores(idcs(1:5))
-
-%% Show test image and top 5 matches
-figure
-imshow(testImage);
-
+% 
+% 
+% 
+% %% Load test image and calculate a score for it
+ testImage = rgb2gray(double(imread('tongue_21.jpg'))/255);
+ [r, c] = size(phiTotal);
+ featureVector = evectors' * (testImage(:) - totalMean);
+ scores = arrayfun(@(n) 1 / (1 + norm(features(:,n) - featureVector)), 1:c);
+% 
+% %% Get top 5 scores
+ [val, idcs] = sort(scores, 'descend');
+ val(1:5)
+ idcs(1:5)
+ scores(idcs(1:5))
+% 
+% %% Show test image and top 5 matches
+ figure
+ imshow(testImage);
+% 
 figure;
 for i = 1:5
     subplot(1, 5, i);
-    if idcs(i)/18 <= 1
+    if idcs(i) == 1
         fprintf("blank ");
         imshow(reshape(phiTotal(:, idcs(i)), 1350, 950)); % put back into 0-255 range
     
-    elseif idcs(i)/18 <= 2
+    elseif idcs(i) == 2
         fprintf("frown ");
         imshow(reshape(phiTotal(:, idcs(i)), 1350, 950)); % put back into 0-255 range
 
 
-    elseif idcs(i)/18 <= 3
+    elseif idcs(i) == 3
         fprintf("smile ");
         imshow(reshape(phiTotal(:, idcs(i)), 1350, 950)); % put back into 0-255 range
 
-    elseif idcs(i)/18 <= 4
+    elseif idcs(i) == 4
         fprintf("surprise ");
         imshow(reshape(phiTotal(:, idcs(i)), 1350, 950)); % put back into 0-255 range
 
-    elseif idcs(i)/18 <= 5
+    elseif idcs(i) == 5
         fprintf("tongue ");
         imshow(reshape(phiTotal(:, idcs(i)), 1350, 950)); % put back into 0-255 range
 
