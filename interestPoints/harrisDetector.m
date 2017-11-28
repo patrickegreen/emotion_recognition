@@ -1,5 +1,8 @@
 function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivative, alpha, nSize, T, display)
-    %%% Harris Detector %%%
+%%% Harris Detector 
+%
+% @returns interests - linear indices of interest points
+%
     % Apply Gaussian derivative filters using sigma = 0.7
     [Gx,Gy] = gaussDeriv2D(sigma_derivative);
     Ix = imfilter(img, Gx, 'replicate');
@@ -21,7 +24,7 @@ function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivativ
     % Threshold values
     R(R<T) = 0; 
 
-    % Non-Maximal Suppression
+    %% Non-Maximal Suppression
     potentials = find(R)';   % non-zero elements, linear indices
     interests = [];
     n_offset = neighborhoodOffsets(R, nSize);

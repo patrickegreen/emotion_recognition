@@ -1,4 +1,4 @@
-function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, neighSize)
+function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha)
 % @param dataSource - local text file with (imageName, classLabel)
 %   A label of zero means to ignore
 % @param dataRoot - folder for which to use images, dataset
@@ -6,6 +6,9 @@ function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, 
 % @param binCount - number of histogram bins to use
 % @param T - threshold for harris detector
 % @param neighSize - neighborhood size for non-max suppression in harris
+% @param hsig_smooth - used for gaussian smoothing in Harris
+% @param hsig_deriv - used for size of the gradient filter in Harris
+% @param hsig_alpha - used for the approximation of R in Harris
 %
 % @returns accuracy - the accuracy obtained from 4-fold cross validation
     %% Prepare data for training & test
@@ -78,7 +81,7 @@ function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, 
             filename = sprintf('%s/%s', dataRoot, name);
             img = double(imread(filename));
             % Get histogram and update appropriate class template / count
-            [h, interests] = gradientHistogram(img, binCount, T, neighSize);
+            [h, interests] = gradientHistogram(img, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha);
             hist(label, :) = hist(label, :) + h;    
             class_counts(label) = class_counts(label) + 1;
         end
@@ -99,7 +102,7 @@ function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, 
             filename = sprintf('%s/%s', dataRoot, name);
             img = double(imread(filename));
             % Get histogram and find best matching template
-            [h, interests] = gradientHistogram(img, binCount, T, neighSize);
+            [h, interests] = gradientHistogram(img, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha);
             D = zeros(1, cN);
             for i = 1:cN
                 template = hist(i, :);
