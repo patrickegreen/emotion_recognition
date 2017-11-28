@@ -1,4 +1,4 @@
-function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivative, alpha, T, display)
+function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivative, alpha, nSize, T, display)
     %%% Harris Detector %%%
     % Apply Gaussian derivative filters using sigma = 0.7
     [Gx,Gy] = gaussDeriv2D(sigma_derivative);
@@ -24,10 +24,11 @@ function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivativ
     % Non-Maximal Suppression
     potentials = find(R)';   % non-zero elements, linear indices
     interests = [];
-    n_offset = neighborhoodOffsets(R);
+    n_offset = neighborhoodOffsets(R, nSize);
     min_offset = min(n_offset(:));
     max_offset = max(n_offset(:));
     numelR = numel(R);
+    i_center = ceil((nSize * nSize) / 2);
     for iLinear = potentials
         if iLinear + min_offset < 1 || iLinear + max_offset > numelR
             % Ensure that offsets don't reach outside the image
@@ -38,7 +39,7 @@ function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivativ
         neighbors = R(iLinear + n_offset);       % 3x3
         % Keep potentials that are maximal AND unique in neighborhood
         nmax = max(neighbors(:));
-        if nmax == neighbors(5) &&  length(neighbors(neighbors==nmax)) == 1
+        if nmax == neighbors(i_center) &&  length(neighbors(neighbors==nmax)) == 1
             % NOTE: Element 5 is center in 3x3
             interests(end+1) = iLinear;
         end

@@ -1,13 +1,14 @@
-function [hist, interests] = gradientHistogram(img, bins, T)
+function [hist, interests] = gradientHistogram(img, bins, T, nSize)
 % @param face - a grayscale image
 % @param bins - number of histogram bins
 % @param T - threshold for harris detector
+% @param nSize - neighborhood size
     sigma_smooth = 1.0;
     sigma_deriv = 0.7;
     alpha = 0.05;
     bin_size = 360.0 / bins;
     % Get the interest points (linear indices) and the derivatives
-    [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_deriv, alpha, T, false);
+    [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_deriv, alpha, nSize, T, false);
     N = size(interests, 2);
     % Calculate the gradient angle directions at each interest point
     %   (1) Get the angle from trig in radians
@@ -40,5 +41,4 @@ function [hist, interests] = gradientHistogram(img, bins, T)
     end
     % Normalize the histogram
     hist = hist ./ N;
-    bar(hist);
 end

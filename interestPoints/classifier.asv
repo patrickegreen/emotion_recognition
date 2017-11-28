@@ -1,6 +1,12 @@
 %%% Main function %%%
+% (0) Meta
+fname_data = 'data_smileVfrown.txt';
+data_root = 'data/close_crop_gray';
+classes = ["Frown", "Smile"];
+% classes = ["Frown", "Smile", "Surprise", "Tongue"];
+
 % (1) Prepare data for training & test
-f = fopen('data.txt', 'r');     % (filename, label)
+f = fopen(fname_data, 'r');     % (filename, label)
 data = textscan(f, '%s%d');
 names = string(vertcat(data{:, 1}));
 labels = vertcat(data{:, 2});
@@ -19,64 +25,91 @@ for ridx = remove_idxs
     labels(ridx) = [];
 end
 sample_count = size(labels, 1);    % count of valid samples
-% Split into training and test (70, 0, 30)
-[train, validate, test] = dividerand(sample_count, 0.85, 0.0, 0.15);
-train_count = size(train,2);
-test_count = size(test,2);
 
-% (2) Build histogram templates for each class in training set
-root = 'data/close_crop_gray';
-classes = ["Frown", "Smile", "Surprise", "Tongue"];
-cN = size(classes,2);     % class count
-bin_count = 12;
-T = 50;
-hist = zeros(cN, bin_count);    % row per class (frown, smile, surprise, tongue)
-class_counts = zeros(1,cN);  % counts of each class for normalization
-for idx = train
-    name = names(idx);
-    label = labels(idx);
-    filename = sprintf('%s/%s', root, name);
-    img = double(imread(filename));
-    % Get histogram and update appropriate class template / count
-    [h, interests] = gradientHistogram(img, bin_count, T);
-    hist(label, :) = hist(label, :) + h;    
-    class_counts(label) = class_counts(label) + 1;
+% (2) Prepare Cross Valdidation (fixed to 5 sets)
+cv_ranges = zeros(5,2);
+set_size = floor(sample_count / 5);
+remainder = sample_count - set_size * 5;
+next_idx = 1;
+for i = 1:5
+    cv_ranges(i,1) = next_idx;
+    step = 0;
+    if remainder > 0
+        step = 1;
+        remainder = remainder - 1;
+    end
+    cvr_size = set_size + step;
+    next_idx = next_idx + cvr_size;
+    cv_ranges(i,2) = next_idx - 1;
 end
-% Normalize each class histogram by count
-for i = 1:cN
-    hist(i, :) = hist(i, :) ./ class_counts(i);
-    bar(hist(i, :));
-    title(sprintf('Class %s', classes(i)));
-    pause;
-end
+perm = randperm(sample_count);
+sample_range = 1:sample_count;
+shuffled = sample_range;
+shuffled(1,perm) = sample_range(1,:);
 
-% (3) Classify Test Data
-% Chi-squared distance (sum of square of difference divided by sum of magnitudes)
 total_correct = 0;
-for idx = test
-    name = names(idx);
-    label = labels(idx);
-    filename = sprintf('%s/%s', root, name);
-    img = double(imread(filename));
-    % Get histogram and find best matching template
-    [h, interests] = gradientHistogram(img, bin_count, T);
-    D = zeros(1, cN);
-    for i = 1:cN
-        template = hist(i, :);
-        dist = chiDistance(h, template);
-        D(i) = dist;
+for setN = 1:5
+    iStart = cv_range(i, 1);
+    iEnd = cv_range(i, 2);
+    if iStart == 1
+        train = shuffled(1,iEnd+1:sample_count);  
+    elseif iEnd == sample_count
+        train = shuffled(1,1:iStart-1);
     end
-    [dist, guess] = min(D);
-    correct = guess == label;
-    if correct
-        total_correct = total_correct + 1;
-    end
-    % Display test image with results
-    imagesc(img);
-    axis('image');
-    colormap('gray');
-    titlesprintf('Guess=%s, Actual=%s', classes(guess), classes(label)));
-    pause;
-    accuracy = total_correct / test_count;
-end
+    % Split into training and test (70, 0, 30)
+    %[train, validate, test] = dividerand(sample_count, 0.85, 0.0, 0.15);
 
+    train_count = size(train,2);
+    test_count = size(test,2);
+
+    % (3) Build histogram templates for each class in training set
+    cN = size(classes,2);     % class count
+    bin_count = 12;
+    T = 50;
+    nSize = 15;
+    hist = zeros(cN, bin_count);    % row per class (frown, smile, surprise, tongue)
+    class_counts = zeros(1,cN);  % counts of each class for normalization
+    for idx = train
+        name = names(idx);
+        label = labels(idx);
+        filename = sprintf('%s/%s', data_root, name);
+        img = double(imread(filename));
+        % Get histogram and update appropriate class template / count
+        [h, interests] = gradientHistogram(img, bin_count, T, nSize);
+        hist(label, :) = hist(label, :) + h;    
+        class_counts(label) = class_counts(label) + 1;
+    end
+    % Normalize each class histogram by count
+    for i = 1:cN
+        hist(i, :) = hist(i, :) ./ class_counts(i);
+        bar(hist(i, :));
+        title(sprintf('Class %s', classes(i)));
+        pause;
+    end
+
+    % (4) Classify Test Data
+    % Chi-squared distance (sum of square of difference divided by sum of magnitudes)
+    for idx = test
+        name = names(idx);
+        label = labels(idx);
+        filename = sprintf('%s/%s', data_root, name);
+        img = double(imread(filename));
+        % Get histogram and find best matching template
+        [h, interests] = gradientHistogram(img, bin_count, T, nSize);
+        D = zeros(1, cN);
+        for i = 1:cN
+            template = hist(i, :);
+            dist = chiDistance(h, template);
+            D(i) = dist;
+        end
+        [dist, guess] = min(D);
+        correct = guess == label;
+        if correct
+            total_correct = total_correct + 1;
+        end
+        % Display test image with results
+        %title = sprintf('Guess=%s, Actual=%s', classes(guess), classes(label));
+        %plotImage(img, interests, title, false, true);
+    end 
+end
+accuracy = total_correct / sample_count;
