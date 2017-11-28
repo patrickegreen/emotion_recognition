@@ -17,6 +17,9 @@ blank_16.jpg 0
 blank_17.jpg 0
 blank_18.jpg 0
 blank_19.jpg 0
+blank_20.jpg 0
+blank_21.jpg 0
+blank_22.jpg 0
 frown_01.jpg 1
 frown_02.jpg 1
 frown_03.jpg 1
@@ -36,6 +39,9 @@ frown_16.jpg 1
 frown_17.jpg 1
 frown_18.jpg 1
 frown_19.jpg 1
+frown_20.jpg 1
+frown_21.jpg 1
+frown_22.jpg 1
 smile_01.jpg 2
 smile_02.jpg 2
 smile_03.jpg 2
@@ -55,6 +61,9 @@ smile_16.jpg 2
 smile_17.jpg 2
 smile_18.jpg 2
 smile_19.jpg 2
+smile_20.jpg 2
+smile_21.jpg 2
+smile_22.jpg 2
 surprise_01.jpg 3
 surprise_02.jpg 3
 surprise_03.jpg 3
@@ -74,6 +83,9 @@ surprise_16.jpg 3
 surprise_17.jpg 3
 surprise_18.jpg 3
 surprise_19.jpg 3
+surprise_20.jpg 3
+surprise_21.jpg 3
+surprise_22.jpg 3
 tongue_01.jpg 4
 tongue_02.jpg 4
 tongue_03.jpg 4
@@ -93,3 +105,6 @@ tongue_16.jpg 4
 tongue_17.jpg 4
 tongue_18.jpg 4
 tongue_19.jpg 4
+tongue_20.jpg 4
+tongue_21.jpg 4
+tongue_22.jpg 4
