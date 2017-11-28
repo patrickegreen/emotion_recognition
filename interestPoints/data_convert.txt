@@ -1,0 +1,15 @@
+blank_20.jpg 0
+blank_21.jpg 0
+blank_22.jpg 0
+frown_20.jpg 1
+frown_21.jpg 1
+frown_22.jpg 1
+smile_20.jpg 2
+smile_21.jpg 2
+smile_22.jpg 2
+surprise_20.jpg 3
+surprise_21.jpg 3
+surprise_22.jpg 3
+tongue_20.jpg 4
+tongue_21.jpg 4
+tongue_22.jpg 4

@@ -1,0 +1,9 @@
+train_idx = permute(train_idx, p);
+p = randperm(56);
+c = train_idx;
+c(1,p) = train_idx(1,:);
+
+
+
+    % Split into training and test (70, 0, 30)
+    %[train, validate, test] = dividerand(sample_count, 0.85, 0.0, 0.15);
