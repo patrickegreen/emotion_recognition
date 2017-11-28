@@ -9,12 +9,14 @@ function [hist, interests] = gradientHistogram(img, bins, T, nSize, hsig_smooth,
     bin_size = 360.0 / bins;
     % Get the interest points (linear indices) and the derivatives
     [interests, Ix, Iy] = harrisDetector(img, hsig_smooth, hsig_deriv, hsig_alpha, nSize, T, false);
-    N = size(interests, 2);
-    % Calculate the gradient angle directions at each interest point
+    %% Filter out interests outside bounds
+    
+    %% Calculate & track gradient angle directions at each interest point
     %   (1) Get the angle from trig in radians
     %   (2) Convert angle to degrees
     %   (3) Add angle offset based sign of dx, dy
     %   (4) Determine the bucket using mod and increment histogram
+    N = size(interests, 2);
     hist = zeros(1, bins);
     for linear_idx = interests
         dx = Ix(linear_idx);

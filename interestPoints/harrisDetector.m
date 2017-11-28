@@ -47,8 +47,10 @@ function [interests, Ix, Iy] = harrisDetector(img, sigma_smooth, sigma_derivativ
             interests(end+1) = iLinear;
         end
     end
-    % Display Corners on original image
+    
+    %% Display Corners on original image
     if display
-        plotImage(img, interests, 'Harris Detection', false, true);
+        %plotImage(img, interests, 'Harris Detection', false, true);
+        plotImage(img, interests, 'Harris Detection', 'files/interest', false);
     end
 end

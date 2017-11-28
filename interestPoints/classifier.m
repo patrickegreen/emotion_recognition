@@ -1,4 +1,4 @@
-function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha)
+function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha, boundIndents)
 % @param dataSource - local text file with (imageName, classLabel)
 %   A label of zero means to ignore
 % @param dataRoot - folder for which to use images, dataset
@@ -9,6 +9,7 @@ function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, 
 % @param hsig_smooth - used for gaussian smoothing in Harris
 % @param hsig_deriv - used for size of the gradient filter in Harris
 % @param hsig_alpha - used for the approximation of R in Harris
+% @param boundIndents - cut corners at (%X, %Y)
 %
 % @returns accuracy - the accuracy obtained from 4-fold cross validation
     %% Prepare data for training & test
@@ -89,9 +90,13 @@ function [accuracy] = classifier(dataSource, dataRoot, classNames, binCount, T, 
         for i = 1:cN
             hist(i, :) = hist(i, :) ./ class_counts(i);
             % Display the histogram
-            %bar(hist(i, :));
-            %title(sprintf('Class %s', classNames(i)));
-            %pause;
+            cname = classNames(i);
+            bar(hist(i, :));
+            ylim([0 0.12]);
+            title(cname);
+            output = sprintf('files/hist_%s', cname);
+            print(output, '-dpng');
+            pause;
         end
 
         %% Classify Test Data

@@ -1,0 +1,25 @@
+%% Varied Parameters
+dataSource = 'data_smileVfrown.txt';
+dataRoot = 'data/close_crop_gray';
+classNames = ["Frown", "Smile"];
+% classNames = ["Frown", "Smile", "Surprise", "Tongue"];
+f = fopen('interestPoints/output_smVf.txt', 'w');
+hsig_smooth = 1.0;
+hsig_deriv = 0.7;
+hsig_alpha = 0.05;
+boundIndents = [0.3, 0.5];      % cut corners at (%X, %Y)
+% Variables
+binCounts = [6, 12, 24, 36];
+Ts = [50, 100, 250, 500];
+neighSizes = [3, 5, 9, 15, 21];
+% Run Classifier
+fprintf(f, 'binCount,T,neighSize,accuracy\n');
+for binCount = binCounts
+    for T = Ts
+        for neighSize = neighSizes
+            % accuracy = classifier(dataSource, dataRoot, classNames, binCount, T, neighSize, hsig_smooth, hsig_deriv, hsig_alpha, boundIndents);
+            accuracy = 0.5;
+            fprintf(f'%d,%d,%d,%6.4f\n', binCount,T,neighSize,accuracy)
+        end
+    end
+end
